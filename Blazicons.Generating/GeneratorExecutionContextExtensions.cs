@@ -19,8 +19,39 @@ public static class GeneratorExecutionContextExtensions
         bool skipColorScrub = false
         )
     {
-        propertyNameFromFileName ??= GetMemberName;
+        var files = Directory.GetFiles(svgFolder, searchPattern, SearchOption.AllDirectories);
 
+        if (isFileNameOk is not null)
+        {
+            files = [.. files.Where(x => isFileNameOk(x)).OrderBy(x => x.ToLowerInvariant())];
+        }
+        
+        var content = Generate(className, files.Select(f => (f, File.ReadAllText(f))), propertyNameFromFileName ?? GetMemberName, skipColorScrub);
+
+        context.AddSource($"{className}.g.cs", content);
+    }
+
+    public static void WriteIconsClass(
+        this SourceProductionContext context,
+        string className,
+        IEnumerable<(string fileName, string content)> svgContents,
+        Func<string, string>? propertyNameFromFileName = null,
+        bool skipColorScrub = false
+        )
+    {
+        var content = Generate(className, svgContents, propertyNameFromFileName ?? GetMemberName, skipColorScrub);
+
+        context.AddSource($"{className}.g.cs", content);
+    }
+
+
+    private static string Generate(
+        string className,
+        IEnumerable<(string fileName, string content)> svgContents,
+        Func<string, string> propertyNameFromFileName,
+        bool skipColorScrub = false
+        )
+    {
         var attributesCollection = new AttributesCollection();
 
         var builder = new StringBuilder();
@@ -34,19 +65,11 @@ public static class GeneratorExecutionContextExtensions
         builder.AppendLine($"public static class {className}");
         builder.AppendLine("{");
 
-        var files = Directory.GetFiles(svgFolder, searchPattern, SearchOption.AllDirectories);
-
-        if (isFileNameOk is not null)
-        {
-            files = files.Where(x => isFileNameOk(x)).OrderBy(x => x.ToLowerInvariant()).ToArray();
-        }
-
         var propertyNames = new List<string>();
         var iconMembersBuilder = new StringBuilder();
-        foreach (var file in files)
+        foreach (var (fileName, content) in svgContents)
         {
-            var svg = File.ReadAllText(Path.Combine(svgFolder, file));
-            var svgDoc = new SvgDocument(svg);
+            var svgDoc = new SvgDocument(content);
             svgDoc.Scrub(skipColorScrub);
             var attributes = svgDoc.GetAttributes();
             foreach (var exclude in ExcludedAttributes)
@@ -58,8 +81,7 @@ public static class GeneratorExecutionContextExtensions
             var svgContent = svgDoc.SvgNode.InnerHtml.Replace("\"", "\\\"");
             var svgContentOneLine = svgContent.Replace("\r", "").Replace("\n", "");
 
-
-            var propertyName = ScrubPropertyName(propertyNameFromFileName(file));
+            var propertyName = ScrubPropertyName(propertyNameFromFileName(fileName));
             propertyNames.Add(propertyName);
             iconMembersBuilder.AppendLine("/// <summary>");
             iconMembersBuilder.AppendLine($"/// Gets the {propertyName} SvgIcon from the {className} library.");
@@ -76,8 +98,9 @@ public static class GeneratorExecutionContextExtensions
         builder.AppendLine();
         builder.AppendLine(iconMembersBuilder.ToString());
         builder.AppendLine("}");
-        context.AddSource($"{className}.g.cs", builder.ToString());
+        return builder.ToString();
     }
+
     private static string ScrubPropertyName(string name)
     {
         var result = name;
@@ -132,7 +155,5 @@ public static class GeneratorExecutionContextExtensions
     }
 
     private static string GetMemberName(string fileName)
-    {
-        return Path.GetFileNameWithoutExtension(fileName).ToPascalCase();
-    }
+        => Path.GetFileNameWithoutExtension(fileName).ToPascalCase();
 }
