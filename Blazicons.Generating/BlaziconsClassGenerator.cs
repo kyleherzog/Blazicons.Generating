@@ -175,7 +175,7 @@ public static class BlaziconsClassGenerator
             Directory.CreateDirectory(directory);
         }
 
-        File.WriteAllText(outputFilePath, generatedCode);
+        File.WriteAllText(outputFilePath, generatedCode, Encoding.UTF8);
     }
     private static string GetMemberName(string fileName)
     {
