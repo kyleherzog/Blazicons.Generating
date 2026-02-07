@@ -14,70 +14,6 @@ public static class BlaziconsClassGenerator
     public static readonly string[] ExcludedAttributes = ["class", "xmlns"];
 
     /// <summary>
-    /// Generates a C# class file at the specified output path, with properties
-    /// representing SVG icons found in the given folder. Each property returns
-    /// an instance of SvgIcon created from the corresponding SVG file's content
-    /// and attributes.
-    /// </summary>
-    /// <param name="outputFilePath">
-    /// The file path where the generated C# class file will be saved. If the
-    /// directory does not exist, it will be created.
-    /// </param>
-    /// <param name="className">
-    /// The name of the class to be generated.
-    /// </param>
-    /// <param name="svgFolder">
-    /// The folder path where the SVG files are located. The generator will search
-    /// for SVG files in this folder and its subdirectories based on the specified
-    /// search pattern.
-    /// </param>
-    /// <param name="searchPattern">
-    /// An optional search pattern to filter the SVG files. The default value is "*.svg",
-    /// </param>
-    /// <param name="propertyNameFromFileName">
-    /// An optional function that takes a file name as input and returns a string to be used
-    /// as the property name for the corresponding SVG icon. If not provided, the generator will
-    /// use the file name (without extension) converted to PascalCase as the property name.
-    /// </param>
-    /// <param name="isFileNameOk">
-    /// An optional function that takes a file name as input and returns a boolean indicating whether
-    /// the file name is valid for inclusion in the generated class. If not provided, all files will
-    /// be included.
-    /// </param>
-    /// <param name="skipColorScrub">
-    /// A boolean flag indicating whether to skip the color scrubbing process when generating the
-    /// SVG content for the icons. If set to true, the original colors in the SVG files will be
-    /// preserved; if false, colors may be scrubbed or modified as part of the generation process.
-    /// The default value is false.
-    /// </param>
-    public static void GenerateClassFile(
-        string outputFilePath,
-        string className,
-        string svgFolder,
-        string searchPattern = "*.svg",
-        Func<string, string>? propertyNameFromFileName = null,
-        Func<string, bool>? isFileNameOk = null,
-        bool skipColorScrub = false
-        )
-    {
-        var generatedCode = GenerateClass(
-            className,
-            svgFolder,
-            searchPattern,
-            propertyNameFromFileName,
-            isFileNameOk,
-            skipColorScrub);
-
-        var directory = Path.GetDirectoryName(outputFilePath);
-        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-        {
-            Directory.CreateDirectory(directory);
-        }
-
-        File.WriteAllText(outputFilePath, generatedCode);
-    }
-
-    /// <summary>
     /// Generates a C# class, with properties representing SVG icons found in
     /// the given folder. Each property returns an instance of SvgIcon
     /// created from the corresponding SVG file's content and attributes.
@@ -157,7 +93,6 @@ public static class BlaziconsClassGenerator
             var svgContent = svgDoc.SvgNode.InnerHtml.Replace("\"", "\\\"");
             var svgContentOneLine = svgContent.Replace("\r", "").Replace("\n", "");
 
-
             var propertyName = ScrubPropertyName(propertyNameFromFileName(file));
             propertyNames.Add(propertyName);
             iconMembersBuilder.AppendLine("/// <summary>");
@@ -177,6 +112,74 @@ public static class BlaziconsClassGenerator
         builder.AppendLine("}");
 
         return builder.ToString();
+    }
+
+    /// <summary>
+    /// Generates a C# class file at the specified output path, with properties
+    /// representing SVG icons found in the given folder. Each property returns
+    /// an instance of SvgIcon created from the corresponding SVG file's content
+    /// and attributes.
+    /// </summary>
+    /// <param name="outputFilePath">
+    /// The file path where the generated C# class file will be saved. If the
+    /// directory does not exist, it will be created.
+    /// </param>
+    /// <param name="className">
+    /// The name of the class to be generated.
+    /// </param>
+    /// <param name="svgFolder">
+    /// The folder path where the SVG files are located. The generator will search
+    /// for SVG files in this folder and its subdirectories based on the specified
+    /// search pattern.
+    /// </param>
+    /// <param name="searchPattern">
+    /// An optional search pattern to filter the SVG files. The default value is "*.svg",
+    /// </param>
+    /// <param name="propertyNameFromFileName">
+    /// An optional function that takes a file name as input and returns a string to be used
+    /// as the property name for the corresponding SVG icon. If not provided, the generator will
+    /// use the file name (without extension) converted to PascalCase as the property name.
+    /// </param>
+    /// <param name="isFileNameOk">
+    /// An optional function that takes a file name as input and returns a boolean indicating whether
+    /// the file name is valid for inclusion in the generated class. If not provided, all files will
+    /// be included.
+    /// </param>
+    /// <param name="skipColorScrub">
+    /// A boolean flag indicating whether to skip the color scrubbing process when generating the
+    /// SVG content for the icons. If set to true, the original colors in the SVG files will be
+    /// preserved; if false, colors may be scrubbed or modified as part of the generation process.
+    /// The default value is false.
+    /// </param>
+    public static void GenerateClassFile(
+        string outputFilePath,
+        string className,
+        string svgFolder,
+        string searchPattern = "*.svg",
+        Func<string, string>? propertyNameFromFileName = null,
+        Func<string, bool>? isFileNameOk = null,
+        bool skipColorScrub = false
+        )
+    {
+        var generatedCode = GenerateClass(
+            className,
+            svgFolder,
+            searchPattern,
+            propertyNameFromFileName,
+            isFileNameOk,
+            skipColorScrub);
+
+        var directory = Path.GetDirectoryName(outputFilePath);
+        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        File.WriteAllText(outputFilePath, generatedCode);
+    }
+    private static string GetMemberName(string fileName)
+    {
+        return Path.GetFileNameWithoutExtension(fileName).ToPascalCase();
     }
 
     private static string ScrubPropertyName(string name)
@@ -230,10 +233,5 @@ public static class BlaziconsClassGenerator
         }
 
         return result;
-    }
-
-    private static string GetMemberName(string fileName)
-    {
-        return Path.GetFileNameWithoutExtension(fileName).ToPascalCase();
     }
 }
