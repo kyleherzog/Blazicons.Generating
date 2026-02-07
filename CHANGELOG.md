@@ -1,6 +1,11 @@
 # Changelog
 These are the list of changes to each version that has been released.
 
+## 3.0
+- [x] Updated HtmlAgilityPack to v1.12.4
+- [x] Removed ExecutionContextExtensions in favor of BlaziconsClassGenerator
+- [x] Removed Microsoft.CodeAnalysis.Common dependency
+
 ## 2.1
 - [x] Updated HtmlAgilityPack to v1.11.71
 - [x] Updated CodeCasing to v4.0.5
