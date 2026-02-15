@@ -12,6 +12,9 @@
     <Description>Provides support for generating Blazicon library packages.</Description>
     <PackageProjectUrl>https://github.com/kyleherzog/Blazicons.Generating</PackageProjectUrl>
     <RepositoryUrl>https://github.com/kyleherzog/Blazicons.Generating</RepositoryUrl>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <DevelopmentDependency>true</DevelopmentDependency>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -28,9 +31,52 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
+
+  <!-- Package the MSBuild task and its dependencies -->
+  <ItemGroup>
+    <!-- Include the MSBuild .props and .targets files -->
+    <BuildFiles Include="..\build\Blazicons.Generating.props">
+      <Link>Build\Blazicons.Generating.props</Link>
+    </BuildFiles>
+    <BuildFiles Include="..\build\Blazicons.Generating.targets">
+      <Link>Build\Blazicons.Generating.targets</Link>
+    </BuildFiles>
+
+    <None Include="@(BuildFiles)" Pack="true" PackagePath="build\" />
+    <None Include="@(BuildFiles)" Pack="true" PackagePath="buildTransitive\" Link="%(BuildFiles.Link)" />
+  </ItemGroup>
+
+  <!-- Include the task assembly and its dependencies in the package -->
+  <PropertyGroup>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <GenerateDependencyFile>true</GenerateDependencyFile>
+  </PropertyGroup>
+
+  <Target Name="PackTaskDependencies" AfterTargets="Build">
+    <ItemGroup>
+      <!-- Copy the main assembly and all dependencies to the tasks folder -->
+      <_TaskFiles Include="$(OutputPath)*.dll" />
+      <_TaskFiles Include="$(OutputPath)*.pdb" />
+      <_TaskFiles Include="$(OutputPath)*.deps.json" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_TaskFiles)" DestinationFolder="$(BaseOutputPath)$(Configuration)\tasks\netstandard2.0\" SkipUnchangedFiles="true" />
+  </Target>
+
+  <ItemGroup>
+    <None Include="$(BaseOutputPath)$(Configuration)\tasks\**\*" Pack="true" PackagePath="tasks\" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="CodeCasing" Version="4.0.5" />
     <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>Runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading" Version="17.12.19">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.102">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

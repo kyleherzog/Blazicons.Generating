@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+    This file defines the MSBuild target that runs the Blazicons code generation task.
+    It is automatically imported when a project references the Blazicons.Generating package.
+  -->
+
+  <!-- Load the custom task assembly -->
+  <!-- For development: use the build output directly. For NuGet package: use the packaged tasks folder -->
+  <PropertyGroup>
+    <_BlaziconsTaskAssembly Condition="Exists('$(MSBuildThisFileDirectory)..\Blazicons.Generating\bin\Debug\netstandard2.0\Blazicons.Generating.dll')">$(MSBuildThisFileDirectory)..\Blazicons.Generating\bin\Debug\netstandard2.0\Blazicons.Generating.dll</_BlaziconsTaskAssembly>
+    <_BlaziconsTaskAssembly Condition="'$(_BlaziconsTaskAssembly)' == ''">$(MSBuildThisFileDirectory)..\tasks\netstandard2.0\Blazicons.Generating.dll</_BlaziconsTaskAssembly>
+
+    <!-- Fallback to Exec mode if the task cannot be loaded (e.g., dotnet build) -->
+    <BlaziconsUseExecMode Condition="'$(BlaziconsUseExecMode)' == ''">false</BlaziconsUseExecMode>
+  </PropertyGroup>
+
+  <UsingTask TaskName="Blazicons.Generating.GenerateBlaziconsTask"
+             AssemblyFile="$(_BlaziconsTaskAssembly)"
+             Condition="'$(BlaziconsUseExecMode)' != 'true'" />
+
+  <!-- Define the target that generates Blazicons -->
+  <!-- Run this target only once in multi-targeted projects: on the first framework in $(TargetFrameworks), or when $(TargetFramework) is empty -->
+    <Target Name="GenerateBlazicons"
+          BeforeTargets="BeforeBuild"
+          Condition="'$(BlaziconsEnableCodeGeneration)' == 'true' AND ( '$(TargetFramework)' == '' OR ( '$(TargetFrameworks)' != '' AND '$(TargetFramework)' == $([System.String]::Copy('$(TargetFrameworks)').Split(';')[0]) ) )"
+          Inputs="$(MSBuildProjectFullPath)"
+          Outputs="$(BlaziconsGeneratedCodeOutputPath)\**\*.g.cs">
+
+    <PropertyGroup>
+      <_BlaziconsGeneratedOutputDir>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '$(BlaziconsGeneratedCodeOutputPath)'))</_BlaziconsGeneratedOutputDir>
+    </PropertyGroup>
+
+    <Message Text="Running Blazicons generator for $(MSBuildProjectName)..." Importance="high" />
+
+    <!-- Validate that either RepoUrl or RepoPath is set -->
+    <Error Condition="'$(BlaziconsRepoUrl)' == '' AND '$(BlaziconsRepoPath)' == ''"
+           Text="Either BlaziconsRepoUrl or BlaziconsRepoPath must be set for Blazicons generation. Set these properties in your project file." />
+
+    <!-- Run the custom MSBuild task -->
+    <GenerateBlaziconsTask
+      RepoUrl="$(BlaziconsRepoUrl)"
+      RepoPath="$(BlaziconsRepoPath)"
+      SvgPattern="$(BlaziconsSvgPattern)"
+      ClassName="$(BlaziconsClassName)"
+      OutputPath="$(_BlaziconsGeneratedOutputDir)"
+      SvgFolderPath="$(BlaziconsSvgFolderPath)"
+      GeneratorPath="$(BlaziconsGeneratorPath)" />
+
+    <Message Text="Blazicons generation completed." Importance="high" />
+  </Target>
+
+</Project>

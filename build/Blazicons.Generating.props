@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+    This file defines default properties for Blazicons code generation.
+    It is automatically imported when a project references the Blazicons.Generating package.
+    All properties can be overridden in the consuming project file.
+  -->
+
+  <PropertyGroup>
+    <!-- Enable or disable code generation. Default: true -->
+    <BlaziconsEnableCodeGeneration Condition="'$(BlaziconsEnableCodeGeneration)' == ''">true</BlaziconsEnableCodeGeneration>
+
+    <!-- The URL of a .zip file containing the icon repository (e.g., GitHub archive) -->
+    <!-- Either BlaziconsRepoUrl or BlaziconsRepoPath must be set -->
+    <BlaziconsRepoUrl Condition="'$(BlaziconsRepoUrl)' == ''"></BlaziconsRepoUrl>
+
+    <!-- The local path to a repository containing SVG icons -->
+    <!-- Either BlaziconsRepoUrl or BlaziconsRepoPath must be set -->
+    <BlaziconsRepoPath Condition="'$(BlaziconsRepoPath)' == ''"></BlaziconsRepoPath>
+
+    <!-- Regex pattern to filter SVG files when downloading from a repository -->
+    <BlaziconsSvgPattern Condition="'$(BlaziconsSvgPattern)' == ''">\.svg$</BlaziconsSvgPattern>
+
+    <!-- The name of the generated icon class -->
+    <BlaziconsClassName Condition="'$(BlaziconsClassName)' == ''">Icon</BlaziconsClassName>
+
+    <!-- The output directory for generated code (relative to project directory) -->
+    <BlaziconsGeneratedCodeOutputPath Condition="'$(BlaziconsGeneratedCodeOutputPath)' == ''">Generated</BlaziconsGeneratedCodeOutputPath>
+
+    <!-- The relative path within the repository to the folder containing SVG files -->
+    <BlaziconsSvgFolderPath Condition="'$(BlaziconsSvgFolderPath)' == ''"></BlaziconsSvgFolderPath>
+
+    <!-- The generator namespace/path structure for organizing generated files -->
+    <!-- Leave empty to use default (Blazicons.Generating/Blazicons.Generating.Tasks) -->
+    <BlaziconsGeneratorPath Condition="'$(BlaziconsGeneratorPath)' == ''"></BlaziconsGeneratorPath>
+  </PropertyGroup>
+
+</Project>
