@@ -49,66 +49,16 @@ Configure your `.csproj` file with the required properties to generate icon clas
 ## Advanced Configuration
 
 ### Generating Multiple Icon Classes
-If your icon library contains multiple icon sets (e.g., different aspect ratios or styles), you can override the default `GenerateBlazicons` target to generate multiple classes:
+For cases where multiple icon sets are desired in one package (e.g., different aspect ratios or styles), the recommended approach is to create separate non-packable generator projects that output to your main project.
 
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <!-- Common configuration -->
-  <PropertyGroup>
-    <BlaziconsRepoUrl>https://github.com/lipis/flag-icons/archive/refs/heads/main.zip</BlaziconsRepoUrl>
-    <BlaziconsGeneratedCodeOutputPath>Generated</BlaziconsGeneratedCodeOutputPath>
-    <BlaziconsGeneratorPath>MyIcons.Generating/MyIcons.Generating.MyIconsGenerator</BlaziconsGeneratorPath>
-  </PropertyGroup>
+my-icons/  
+├─ MyIcons.csproj (main project, packable)  
+├─ MyIcons.Filled/  
+│   ├─ MyIcons.Filled.csproj (generator project, non-packable)  
+├─ MyIcons.Outlined/  
+│   ├─ MyIcons.Outlined.csproj (generator project, non-packable)  
 
-  <!-- Configuration for first icon set -->
-  <PropertyGroup>
-    <BlaziconsSvgPattern_4x3>^flags\/4x3\/.*.svg$</BlaziconsSvgPattern_4x3>
-    <BlaziconsClassName_4x3>FlagIcon4x3</BlaziconsClassName_4x3>
-    <BlaziconsSvgFolderPath_4x3>flags/4x3</BlaziconsSvgFolderPath_4x3>
-  </PropertyGroup>
 
-  <!-- Configuration for second icon set -->
-  <PropertyGroup>
-    <BlaziconsSvgPattern_1x1>^flags\/1x1\/.*.svg$</BlaziconsSvgPattern_1x1>
-    <BlaziconsClassName_1x1>FlagIcon1x1</BlaziconsClassName_1x1>
-    <BlaziconsSvgFolderPath_1x1>flags/1x1</BlaziconsSvgFolderPath_1x1>
-  </PropertyGroup>
-
-  <!-- Override the default target to generate multiple icon classes -->
-  <Target Name="GenerateBlazicons"
-          BeforeTargets="BeforeBuild"
-          Condition="'$(BlaziconsEnableCodeGeneration)' == 'true' AND ( '$(TargetFramework)' == '' OR ( '$(TargetFrameworks)' != '' AND '$(TargetFramework)' == $([System.String]::Copy('$(TargetFrameworks)').Split(';')[0]) ) )"
-          Inputs="$(MSBuildProjectFullPath)"
-          Outputs="$(BlaziconsGeneratedCodeOutputPath)\**\*.g.cs">
-
-    <PropertyGroup>
-      <_BlaziconsGeneratedOutputDir>$([System.IO.Path]::Combine('$(MSBuildProjectDirectory)', '$(BlaziconsGeneratedCodeOutputPath)'))</_BlaziconsGeneratedOutputDir>
-    </PropertyGroup>
-
-    <Message Text="Running Blazicons generator for $(MSBuildProjectName)..." Importance="high" />
-
-    <!-- Generate first icon class -->
-    <GenerateBlaziconsTask
-      RepoUrl="$(BlaziconsRepoUrl)"
-      SvgPattern="$(BlaziconsSvgPattern_4x3)"
-      ClassName="$(BlaziconsClassName_4x3)"
-      OutputPath="$(_BlaziconsGeneratedOutputDir)"
-      SvgFolderPath="$(BlaziconsSvgFolderPath_4x3)"
-      GeneratorPath="$(BlaziconsGeneratorPath)" />
-
-    <!-- Generate second icon class -->
-    <GenerateBlaziconsTask
-      RepoUrl="$(BlaziconsRepoUrl)"
-      SvgPattern="$(BlaziconsSvgPattern_1x1)"
-      ClassName="$(BlaziconsClassName_1x1)"
-      OutputPath="$(_BlaziconsGeneratedOutputDir)"
-      SvgFolderPath="$(BlaziconsSvgFolderPath_1x1)"
-      GeneratorPath="$(BlaziconsGeneratorPath)" />
-
-    <Message Text="Blazicons generation completed." Importance="high" />
-  </Target>
-</Project>
-```
 
 ### Build-Time Generation Control
 Code generation is controlled by the `BlaziconsEnableCodeGeneration` property, which is automatically set based on configuration file presence. To manually control generation:
