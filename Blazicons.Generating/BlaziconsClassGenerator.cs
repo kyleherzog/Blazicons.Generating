@@ -178,10 +178,6 @@ public static class BlaziconsClassGenerator
 
         File.WriteAllText(outputFilePath, generatedCode, Encoding.UTF8);
     }
-    private static string GetMemberName(string fileName)
-    {
-        return Path.GetFileNameWithoutExtension(fileName).ToPascalCase();
-    }
 
     private static Func<string, string> CreatePropertyNameTransformer(string removalPattern)
     {
@@ -192,6 +188,11 @@ public static class BlaziconsClassGenerator
             result = regex.Replace(result, string.Empty);
             return result.ToPascalCase();
         };
+    }
+
+    private static string GetMemberName(string fileName)
+    {
+        return Path.GetFileNameWithoutExtension(fileName).ToPascalCase();
     }
 
     private static string ScrubPropertyName(string name)
