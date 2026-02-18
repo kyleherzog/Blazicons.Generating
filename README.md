@@ -26,15 +26,15 @@ Configure your `.csproj` file with the required properties to generate icon clas
     <BlaziconsSvgPattern>^src\/svg\/.*.svg$</BlaziconsSvgPattern>
     <BlaziconsClassName>MyIcon</BlaziconsClassName>
     <BlaziconsSvgFolderPath>src/svg</BlaziconsSvgFolderPath>
-    <BlaziconsPropertyNameCleanupPattern>-(original|plain|line)</BlaziconsPropertyNameCleanupPattern>
+    <BlaziconsPropertyNameRemovalPattern>-(original|plain|line)</BlaziconsPropertyNameRemovalPattern>
     <BlaziconsGeneratedCodeOutputPath>Generated</BlaziconsGeneratedCodeOutputPath>
     <BlaziconsGeneratorPath>MyIcons.Generating/MyIcons.Generating.MyIconsGenerator</BlaziconsGeneratorPath>
   </PropertyGroup>
 </Project>
 ```
 
-**Property Name Cleanup Example:**  
-When `BlaziconsPropertyNameCleanupPattern` is set to `-(original|plain|line)`, file names are transformed as follows:
+**Property Name Removal Example:**  
+When `BlaziconsPropertyNameRemovalPattern` is set to `-(original|plain|line)`, file names are transformed as follows:
 - `react-plain.svg` → `React` (instead of `ReactPlain`)
 - `angular-original.svg` → `Angular` (instead of `AngularOriginal`)
 - `vue-line.svg` → `Vue` (instead of `VueLine`)
