@@ -38,6 +38,11 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
     public string? OutputPath { get; set; }
 
     /// <summary>
+    /// Gets or sets a regex pattern to remove from file names when generating property names.
+    /// </summary>
+    public string? PropertyNameRemovalPattern { get; set; }
+
+    /// <summary>
     /// Gets or sets the local path to a repository containing SVG icons.
     /// Either this or RepoUrl must be specified.
     /// </summary>
@@ -275,6 +280,7 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
         BlaziconsClassGenerator.GenerateClassFile(
             outputFilePath,
             ClassName,
-            svgFolder);
+            svgFolder,
+            propertyNameRemovalPattern: PropertyNameRemovalPattern);
     }
 }

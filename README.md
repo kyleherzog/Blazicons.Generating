@@ -26,11 +26,18 @@ Configure your `.csproj` file with the required properties to generate icon clas
     <BlaziconsSvgPattern>^src\/svg\/.*.svg$</BlaziconsSvgPattern>
     <BlaziconsClassName>MyIcon</BlaziconsClassName>
     <BlaziconsSvgFolderPath>src/svg</BlaziconsSvgFolderPath>
+    <BlaziconsPropertyNameCleanupPattern>-(original|plain|line)</BlaziconsPropertyNameCleanupPattern>
     <BlaziconsGeneratedCodeOutputPath>Generated</BlaziconsGeneratedCodeOutputPath>
     <BlaziconsGeneratorPath>MyIcons.Generating/MyIcons.Generating.MyIconsGenerator</BlaziconsGeneratorPath>
   </PropertyGroup>
 </Project>
 ```
+
+**Property Name Cleanup Example:**  
+When `BlaziconsPropertyNameCleanupPattern` is set to `-(original|plain|line)`, file names are transformed as follows:
+- `react-plain.svg` → `React` (instead of `ReactPlain`)
+- `angular-original.svg` → `Angular` (instead of `AngularOriginal`)
+- `vue-line.svg` → `Vue` (instead of `VueLine`)
 
 ### Configuration Properties
 
@@ -41,6 +48,7 @@ Configure your `.csproj` file with the required properties to generate icon clas
 | `BlaziconsSvgPattern` | Yes | Regex pattern to filter SVG files | `^src\/svg\/.*.svg$` |
 | `BlaziconsClassName` | Yes | Name of the generated icon class | `Ionicon` |
 | `BlaziconsSvgFolderPath` | No | Relative path within the repo to the SVG folder | `src/svg` |
+| `BlaziconsPropertyNameRemovalPattern` | No | Regex pattern to remove from file names when generating property names | `-(original\|plain\|line)` |
 | `BlaziconsGeneratedCodeOutputPath` | Yes | Output directory for generated code | `Generated` |
 | `BlaziconsGeneratorPath` | No | Generator namespace/path structure for the generated file | `Blazicons.Ionicons.Generating/Blazicons.Ionicons.Generating.IoniconsGenerator` |
 
