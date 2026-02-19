@@ -46,7 +46,8 @@
       ClassName="$(BlaziconsClassName)"
       OutputPath="$(_BlaziconsGeneratedOutputDir)"
       SvgFolderPath="$(BlaziconsSvgFolderPath)"
-      GeneratorPath="$(BlaziconsGeneratorPath)" />
+      GeneratorPath="$(BlaziconsGeneratorPath)"
+      PropertyNameRemovalPattern="$(BlaziconsPropertyNameRemovalPattern)" />
 
     <Message Text="Blazicons generation completed." Importance="high" />
   </Target>
