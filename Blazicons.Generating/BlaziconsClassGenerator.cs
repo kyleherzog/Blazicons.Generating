@@ -74,8 +74,10 @@ public static class BlaziconsClassGenerator
 
         if (isFileNameOk is not null)
         {
-            files = files.Where(x => isFileNameOk(x)).OrderBy(x => propertyNameFromFileName(x).ToLowerInvariant()).ToArray();
+            files = files.Where(x => isFileNameOk(x)).ToArray();
         }
+
+        files = files.OrderBy(x => propertyNameFromFileName(x).ToLowerInvariant()).ToArray();
 
         var propertyNames = new List<string>();
         var iconMembersBuilder = new StringBuilder();
