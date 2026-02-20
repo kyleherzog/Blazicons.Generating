@@ -1,6 +1,10 @@
 # Changelog
 These are the list of changes to each version that has been released.
 
+## 3.1
+- [x] Added BlaziconsPropertyNameRemovalPattern parameter
+- [x] Updated Microsoft.VisualStudio.Threading to v17.14.15
+
 ## 3.0
 - [x] Updated HtmlAgilityPack to v1.12.4
 - [x] Removed ExecutionContextExtensions in favor of BlaziconsClassGenerator

@@ -34,6 +34,9 @@
     <!-- The generator namespace/path structure for organizing generated files -->
     <!-- Leave empty to use default (Blazicons.Generating/Blazicons.Generating.Tasks) -->
     <BlaziconsGeneratorPath Condition="'$(BlaziconsGeneratorPath)' == ''"></BlaziconsGeneratorPath>
+
+    <!-- Regex pattern to remove from file names when generating property names -->
+    <BlaziconsPropertyNameRemovalPattern Condition="'$(BlaziconsPropertyNameRemovalPattern)' == ''"></BlaziconsPropertyNameRemovalPattern>
   </PropertyGroup>
 
 </Project>

@@ -26,23 +26,31 @@ Configure your `.csproj` file with the required properties to generate icon clas
     <BlaziconsSvgPattern>^src\/svg\/.*.svg$</BlaziconsSvgPattern>
     <BlaziconsClassName>MyIcon</BlaziconsClassName>
     <BlaziconsSvgFolderPath>src/svg</BlaziconsSvgFolderPath>
+    <BlaziconsPropertyNameRemovalPattern>-(original|plain|line)</BlaziconsPropertyNameRemovalPattern>
     <BlaziconsGeneratedCodeOutputPath>Generated</BlaziconsGeneratedCodeOutputPath>
     <BlaziconsGeneratorPath>MyIcons.Generating/MyIcons.Generating.MyIconsGenerator</BlaziconsGeneratorPath>
   </PropertyGroup>
 </Project>
 ```
 
+**Property Name Removal Example:**  
+When `BlaziconsPropertyNameRemovalPattern` is set to `-(original|plain|line)`, file names are transformed as follows:
+- `react-plain.svg` → `React` (instead of `ReactPlain`)
+- `angular-original.svg` → `Angular` (instead of `AngularOriginal`)
+- `vue-line.svg` → `Vue` (instead of `VueLine`)
+
 ### Configuration Properties
 
 | Property | Required | Description | Example |
 |----------|----------|-------------|---------|
-| `BlaziconsRepoUrl` | Yes* | URL to a .zip file containing the icon repository | `https://github.com/ionic-team/ionicons/archive/refs/heads/main.zip` |
+| `BlaziconsRepoUrl` | Yes* | URL to a .zip file containing the icon repository | `https://github.com/my-team/myicons/archive/refs/heads/main.zip` |
 | `BlaziconsRepoPath` | Yes* | Local path to a repository (alternative to RepoUrl) | `C:\Source\icons` |
 | `BlaziconsSvgPattern` | Yes | Regex pattern to filter SVG files | `^src\/svg\/.*.svg$` |
-| `BlaziconsClassName` | Yes | Name of the generated icon class | `Ionicon` |
+| `BlaziconsClassName` | Yes | Name of the generated icon class | `MyIcon` |
 | `BlaziconsSvgFolderPath` | No | Relative path within the repo to the SVG folder | `src/svg` |
+| `BlaziconsPropertyNameRemovalPattern` | No | Regex pattern to remove from file names when generating property names | `-(original\|plain\|line)` |
 | `BlaziconsGeneratedCodeOutputPath` | Yes | Output directory for generated code | `Generated` |
-| `BlaziconsGeneratorPath` | No | Generator namespace/path structure for the generated file | `Blazicons.Ionicons.Generating/Blazicons.Ionicons.Generating.IoniconsGenerator` |
+| `BlaziconsGeneratorPath` | No | Generator namespace/path structure for the generated file | `Blazicons.MyIcons.Generating/Blazicons.MyIcons.Generating.MyIconsGenerator` |
 
 \* Either `BlaziconsRepoUrl` or `BlaziconsRepoPath` must be specified.
 

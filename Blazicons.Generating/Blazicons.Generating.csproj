@@ -4,9 +4,9 @@
     <LangVersion>14.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <ApplicationVersion>3.0</ApplicationVersion>
+    <ApplicationVersion>3.1</ApplicationVersion>
     <ApplicationRevision>0</ApplicationRevision>
-    <Version>3.0</Version>
+    <Version>3.1</Version>
     <Authors>Kyle Herzog</Authors>
     <PackageTags>Blazor Code Generation</PackageTags>
     <Description>Provides support for generating Blazicon library packages.</Description>
@@ -22,9 +22,7 @@
     <PackageIcon>blazicons-md-128.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-  </PropertyGroup>
+
   <ItemGroup>
     <None Include="..\README.md">
       <Pack>True</Pack>
@@ -70,18 +68,19 @@
   <ItemGroup>
     <PackageReference Include="CodeCasing" Version="4.0.5" />
     <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.0.0">
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.3.3">
       <PrivateAssets>all</PrivateAssets>
       <ExcludeAssets>Runtime</ExcludeAssets>
+      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Threading" Version="17.12.19">
+    <PackageReference Include="Microsoft.VisualStudio.Threading" Version="17.14.15">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.102">
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.103">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.102">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.103">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

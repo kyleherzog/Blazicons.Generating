@@ -29,10 +29,9 @@ public static class BlaziconsClassGenerator
     /// <param name="searchPattern">
     /// An optional search pattern to filter the SVG files. The default value is "*.svg",
     /// </param>
-    /// <param name="propertyNameFromFileName">
-    /// An optional function that takes a file name as input and returns a string to be used
-    /// as the property name for the corresponding SVG icon. If not provided, the generator will
-    /// use the file name (without extension) converted to PascalCase as the property name.
+    /// <param name="propertyNameRemovalPattern">
+    /// An optional regex pattern to remove from file names when generating property names.
+    /// If not provided, the file name (without extension) is converted directly to PascalCase.
     /// </param>
     /// <param name="isFileNameOk">
     /// An optional function that takes a file name as input and returns a boolean indicating whether
@@ -49,12 +48,14 @@ public static class BlaziconsClassGenerator
         string className,
         string svgFolder,
         string searchPattern = "*.svg",
-        Func<string, string>? propertyNameFromFileName = null,
+        string? propertyNameRemovalPattern = null,
         Func<string, bool>? isFileNameOk = null,
         bool skipColorScrub = false
         )
     {
-        propertyNameFromFileName ??= GetMemberName;
+        var propertyNameFromFileName = string.IsNullOrWhiteSpace(propertyNameRemovalPattern)
+            ? GetMemberName
+            : CreatePropertyNameTransformer(propertyNameRemovalPattern!);
 
         var attributesCollection = new AttributesCollection();
 
@@ -73,8 +74,10 @@ public static class BlaziconsClassGenerator
 
         if (isFileNameOk is not null)
         {
-            files = files.Where(x => isFileNameOk(x)).OrderBy(x => x.ToLowerInvariant()).ToArray();
+            files = files.Where(x => isFileNameOk(x)).ToArray();
         }
+
+        files = files.OrderBy(x => propertyNameFromFileName(x).ToLowerInvariant()).ToArray();
 
         var propertyNames = new List<string>();
         var iconMembersBuilder = new StringBuilder();
@@ -135,10 +138,10 @@ public static class BlaziconsClassGenerator
     /// <param name="searchPattern">
     /// An optional search pattern to filter the SVG files. The default value is "*.svg",
     /// </param>
-    /// <param name="propertyNameFromFileName">
-    /// An optional function that takes a file name as input and returns a string to be used
-    /// as the property name for the corresponding SVG icon. If not provided, the generator will
-    /// use the file name (without extension) converted to PascalCase as the property name.
+    /// <param name="propertyNameRemovalPattern">
+    /// An optional regex pattern to remove from file names when generating property names.
+    /// Example: "-(original|plain|line)" will remove these suffixes before converting to PascalCase.
+    /// If not provided, the file name (without extension) is converted directly to PascalCase.
     /// </param>
     /// <param name="isFileNameOk">
     /// An optional function that takes a file name as input and returns a boolean indicating whether
@@ -156,7 +159,7 @@ public static class BlaziconsClassGenerator
         string className,
         string svgFolder,
         string searchPattern = "*.svg",
-        Func<string, string>? propertyNameFromFileName = null,
+        string? propertyNameRemovalPattern = null,
         Func<string, bool>? isFileNameOk = null,
         bool skipColorScrub = false
         )
@@ -165,7 +168,7 @@ public static class BlaziconsClassGenerator
             className,
             svgFolder,
             searchPattern,
-            propertyNameFromFileName,
+            propertyNameRemovalPattern,
             isFileNameOk,
             skipColorScrub);
 
@@ -177,6 +180,18 @@ public static class BlaziconsClassGenerator
 
         File.WriteAllText(outputFilePath, generatedCode, Encoding.UTF8);
     }
+
+    private static Func<string, string> CreatePropertyNameTransformer(string removalPattern)
+    {
+        var regex = new System.Text.RegularExpressions.Regex(removalPattern);
+        return fileName =>
+        {
+            var result = Path.GetFileNameWithoutExtension(fileName);
+            result = regex.Replace(result, string.Empty);
+            return result.ToPascalCase();
+        };
+    }
+
     private static string GetMemberName(string fileName)
     {
         return Path.GetFileNameWithoutExtension(fileName).ToPascalCase();
