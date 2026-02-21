@@ -2,7 +2,7 @@
 These are the list of changes to each version that has been released.
 
 ## 3.2
-- [x] Renamed BlaziconsPropertyNameRemovalPattern to BlaziconsPropertyNameRemovalPatterns to allow support for multiple patterns
+- [x] Added BlaziconsPropertyNameRemovalPatterns to allow support for multiple patterns
 
 ## 3.1
 - [x] Added BlaziconsPropertyNameRemovalPattern parameter
