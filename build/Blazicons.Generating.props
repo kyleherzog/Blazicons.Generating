@@ -37,6 +37,9 @@
 
     <!-- Regex pattern to remove from file names when generating property names -->
     <BlaziconsPropertyNameRemovalPattern Condition="'$(BlaziconsPropertyNameRemovalPattern)' == ''"></BlaziconsPropertyNameRemovalPattern>
+
+    <!-- Semicolon-delimited string of regex patterns to remove from file names when generating property names -->
+    <BlaziconsPropertyNameRemovalPatterns Condition="'$(BlaziconsPropertyNameRemovalPatterns)' == ''"></BlaziconsPropertyNameRemovalPatterns>
   </PropertyGroup>
 
 </Project>
