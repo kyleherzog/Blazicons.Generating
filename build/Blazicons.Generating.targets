@@ -48,7 +48,8 @@
       SvgFolderPath="$(BlaziconsSvgFolderPath)"
       GeneratorPath="$(BlaziconsGeneratorPath)"
       PropertyNameRemovalPattern="$(BlaziconsPropertyNameRemovalPattern)"
-      PropertyNameRemovalPatterns="$(BlaziconsPropertyNameRemovalPatterns)"/>
+      PropertyNameRemovalPatterns="$(BlaziconsPropertyNameRemovalPatterns)"
+      SkipColorScrub="$(BlaziconsSkipColorScrub)" />
 
     <Message Text="Blazicons generation completed." Importance="high" />
   </Target>

@@ -84,6 +84,12 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
     public string SvgPattern { get; set; } = @"\.svg$";
 
     /// <summary>
+    /// Gets or sets whether to skip scrubbing colors in SVG content.
+    /// Default: false
+    /// </summary>
+    public bool SkipColorScrub { get; set; }
+
+    /// <summary>
     /// Cancels the task execution.
     /// </summary>
     public void Cancel()
@@ -304,6 +310,7 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
             outputFilePath,
             ClassName,
             svgFolder,
-            propertyNameRemovalPatterns: patternsToUse);
+            propertyNameRemovalPatterns: patternsToUse,
+            skipColorScrub: SkipColorScrub);
     }
 }

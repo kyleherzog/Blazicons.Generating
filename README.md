@@ -27,6 +27,7 @@ Configure your `.csproj` file with the required properties to generate icon clas
     <BlaziconsClassName>MyIcon</BlaziconsClassName>
     <BlaziconsSvgFolderPath>src/svg</BlaziconsSvgFolderPath>
     <BlaziconsPropertyNameRemovalPatterns>^My_Icon_;_24_\w*$;-(original|plain|line)</BlaziconsPropertyNameRemovalPatterns>
+    <BlaziconsSkipColorScrub>true</BlaziconsSkipColorScrub>
     <BlaziconsGeneratedCodeOutputPath>Generated</BlaziconsGeneratedCodeOutputPath>
     <BlaziconsGeneratorPath>MyIcons.Generating/MyIcons.Generating.MyIconsGenerator</BlaziconsGeneratorPath>
   </PropertyGroup>
@@ -56,6 +57,7 @@ Example with the above configuration:
 | `BlaziconsClassName` | Yes | Name of the generated icon class | `MyIcon` |
 | `BlaziconsSvgFolderPath` | No | Relative path within the repo to the SVG folder | `src/svg` |
 | `BlaziconsPropertyNameRemovalPatterns` | No | Semicolon-delimited regex patterns to remove from file names: `^pattern` (prefix), `pattern$` (suffix), `pattern` (anywhere) | `^My_Icons_;_24_\w*$;-(original\|plain\|line)` |
+| `BlaziconsSkipColorScrub` | No | Skip color scrubbing for SVG content | `true` |
 | `BlaziconsGeneratedCodeOutputPath` | Yes | Output directory for generated code | `Generated` |
 | `BlaziconsGeneratorPath` | No | Generator namespace/path structure for the generated file | `Blazicons.MyIcons.Generating/Blazicons.MyIcons.Generating.MyIconsGenerator` |
 
