@@ -60,6 +60,7 @@ Example with the above configuration:
 | `BlaziconsSkipColorScrub` | No | Skip color scrubbing for SVG content | `true` |
 | `BlaziconsGeneratedCodeOutputPath` | Yes | Output directory for generated code | `Generated` |
 | `BlaziconsGeneratorPath` | No | Generator namespace/path structure for the generated file | `Blazicons.MyIcons.Generating/Blazicons.MyIcons.Generating.MyIconsGenerator` |
+| `BlaziconsPreserveExtractedFiles` | No | Preserve extracted repository files after generation for debugging path issues | `true` |
 
 \* Either `BlaziconsRepoUrl` or `BlaziconsRepoPath` must be specified.
 
@@ -86,6 +87,17 @@ Code generation is controlled by the `BlaziconsEnableCodeGeneration` property, w
 </PropertyGroup>
 ```
 
+### Debugging Path Issues
+When experiencing "SVG folder not found" errors, use the `BlaziconsPreserveExtractedFiles` property to preserve temporary files for inspection:
+
+```xml
+<PropertyGroup>
+  <BlaziconsPreserveExtractedFiles>true</BlaziconsPreserveExtractedFiles>
+</PropertyGroup>
+```
+
+Build the project and check the build output for the message "Extracted files preserved at: [path]". You can then navigate to that directory to verify the folder structure and determine the correct `BlaziconsSvgFolderPath` value. Remember to set this property back to `false` for production builds.
+
 ## Troubleshooting
 
 ### Code not generating
@@ -93,6 +105,13 @@ Code generation is controlled by the `BlaziconsEnableCodeGeneration` property, w
 2. Verify all required properties are configured
 3. Check that the `BlaziconsRepoUrl` or `BlaziconsRepoPath` is valid and accessible
 4. Review build output for error messages from the generator
+
+### SVG folder not found
+1. Use `BlaziconsPreserveExtractedFiles` set to `true` to keep temporary extracted files
+2. Check the build output for the "Extracted files preserved at" message
+3. Navigate to that directory to verify the actual folder structure
+4. Adjust `BlaziconsSvgFolderPath` to match the relative path from the extracted files root
+5. Remember to set `BlaziconsPreserveExtractedFiles` back to `false` for normal use
 
 ### Build errors after generation
 1. Clean the solution and rebuild

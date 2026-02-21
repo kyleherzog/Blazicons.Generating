@@ -90,6 +90,13 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
     public bool SkipColorScrub { get; set; }
 
     /// <summary>
+    /// Gets or sets whether to preserve the extracted repository files after generation.
+    /// Useful for debugging path issues. When set to true, files are not deleted from the temp folder.
+    /// Default: false
+    /// </summary>
+    public bool PreserveExtractedFiles { get; set; }
+
+    /// <summary>
     /// Cancels the task execution.
     /// </summary>
     public void Cancel()
@@ -265,7 +272,14 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
             // Clean up downloaded files
             try
             {
-                downloader?.CleanUp();
+                if (!PreserveExtractedFiles)
+                {
+                    downloader?.CleanUp();
+                }
+                else
+                {
+                    Log.LogMessage(MessageImportance.High, $"Extracted files preserved at: {downloader?.RootFolder}");
+                }
             }
             catch (Exception cleanupEx)
             {
