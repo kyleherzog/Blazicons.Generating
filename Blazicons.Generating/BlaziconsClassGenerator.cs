@@ -35,7 +35,7 @@ public static class BlaziconsClassGenerator
     /// - ^pattern - Removes from the start (prefix)
     /// - pattern$ - Removes from the end (suffix)
     /// - pattern - Removes anywhere in the name
-    /// 
+    ///
     /// Example: "^Ic_Fluent_;_24_\w*$;-(original|plain)"
     /// </param>
     /// <param name="isFileNameOk">
@@ -58,7 +58,7 @@ public static class BlaziconsClassGenerator
         bool skipColorScrub = false
         )
     {
-        Func<string, string> propertyNameFromFileName = CreatePropertyNameTransformer(propertyNameRemovalPatterns);
+        var propertyNameFromFileName = CreatePropertyNameTransformer(propertyNameRemovalPatterns);
 
         var attributesCollection = new AttributesCollection();
 
@@ -147,7 +147,7 @@ public static class BlaziconsClassGenerator
     /// - ^pattern - Removes from the start (prefix)
     /// - pattern$ - Removes from the end (suffix)
     /// - pattern - Removes anywhere in the name
-    /// 
+    ///
     /// Example: "^Ic_Fluent_;_24_\w*$;-(original|plain)"
     /// </param>
     /// <param name="isFileNameOk">
@@ -209,11 +209,6 @@ public static class BlaziconsClassGenerator
 
             return result.ToPascalCase();
         };
-    }
-
-    private static string GetMemberName(string fileName)
-    {
-        return Path.GetFileNameWithoutExtension(fileName).ToPascalCase();
     }
 
     private static string ScrubPropertyName(string name)

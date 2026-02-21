@@ -7,9 +7,11 @@ internal class SvgDocument
     public SvgDocument(string svg)
     {
         Svg = svg;
-        Document = new HtmlDocument();
-        Document.OptionOutputOriginalCase = true;
-        Document.GlobalAttributeValueQuote = AttributeValueQuote.SingleQuote;
+        Document = new HtmlDocument
+        {
+            OptionOutputOriginalCase = true,
+            GlobalAttributeValueQuote = AttributeValueQuote.SingleQuote,
+        };
         Document.LoadHtml(Svg);
         Document.UseAttributeOriginalName("svg");
 
@@ -63,9 +65,9 @@ internal class SvgDocument
     public void ConvertStylesToAttributes()
     {
         var nodes = SvgNode.DescendantsAndSelf().ToList();
-        foreach (var node in nodes.Where(node => node.Attributes.Contains("style")))
+        foreach (var attributeSet in nodes.Where(node => node.Attributes.Contains("style")).Select(x => x.Attributes))
         {
-            var styleValue = node.Attributes["style"].Value;
+            var styleValue = attributeSet["style"].Value;
             var parts = styleValue.Split([';'], StringSplitOptions.RemoveEmptyEntries);
             var attributes = new List<HtmlAttribute>();
             foreach (var part in parts)
@@ -77,10 +79,10 @@ internal class SvgDocument
                 }
             }
 
-            node.Attributes.Remove("style");
+            attributeSet.Remove("style");
             foreach (var attribute in attributes)
             {
-                node.Attributes.Add(attribute);
+                attributeSet.Add(attribute);
             }
         }
     }
