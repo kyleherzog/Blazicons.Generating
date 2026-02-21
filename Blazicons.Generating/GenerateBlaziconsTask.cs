@@ -38,9 +38,15 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
     public string? OutputPath { get; set; }
 
     /// <summary>
-    /// Gets or sets a regex pattern to remove from file names when generating property names.
+    /// Gets or sets a semicolon-delimited string of property name removal patterns.
+    /// Supports the following pattern types:
+    /// - prefix:value - Removes a literal prefix from the beginning
+    /// - suffix:pattern - Removes a regex pattern from the end
+    /// - pattern:regex - Removes a regex pattern anywhere
+    /// 
+    /// Example: "prefix:Ic_Fluent_;suffix:_24_\w*$;pattern:-(original|plain)"
     /// </summary>
-    public string? PropertyNameRemovalPattern { get; set; }
+    public string? PropertyNameRemovalPatterns { get; set; }
 
     /// <summary>
     /// Gets or sets the local path to a repository containing SVG icons.
@@ -281,6 +287,6 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
             outputFilePath,
             ClassName,
             svgFolder,
-            propertyNameRemovalPattern: PropertyNameRemovalPattern);
+            propertyNameRemovalPatterns: PropertyNameRemovalPatterns);
     }
 }
