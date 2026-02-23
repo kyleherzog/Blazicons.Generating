@@ -1,6 +1,11 @@
 # Changelog
 These are the list of changes to each version that has been released.
 
+## 3.2
+- [x] Added BlaziconsPropertyNameRemovalPatterns to allow support for multiple patterns
+- [x] Added SkipColorScrub parameter
+- [x] Added BlaziconsPreserveExtractedFiles parameter
+
 ## 3.1
 - [x] Added BlaziconsPropertyNameRemovalPattern parameter
 - [x] Updated Microsoft.VisualStudio.Threading to v17.14.15

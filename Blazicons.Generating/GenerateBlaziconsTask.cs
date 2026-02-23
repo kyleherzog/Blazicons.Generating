@@ -38,9 +38,27 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
     public string? OutputPath { get; set; }
 
     /// <summary>
-    /// Gets or sets a regex pattern to remove from file names when generating property names.
+    /// Gets or sets a semicolon-delimited string of property name removal patterns.
+    /// DEPRECATED: Use PropertyNameRemovalPatterns instead. This property is maintained for backwards compatibility.
+    /// Supports the following pattern types:
+    /// - prefix:value - Removes a literal prefix from the beginning
+    /// - suffix:pattern - Removes a regex pattern from the end
+    /// - pattern:regex - Removes a regex pattern anywhere
+    ///
+    /// Example: "prefix:Ic_Fluent_;suffix:_24_\w*$;pattern:-(original|plain)"
     /// </summary>
     public string? PropertyNameRemovalPattern { get; set; }
+
+    /// <summary>
+    /// Gets or sets a semicolon-delimited string of property name removal patterns.
+    /// Supports the following pattern types:
+    /// - prefix:value - Removes a literal prefix from the beginning
+    /// - suffix:pattern - Removes a regex pattern from the end
+    /// - pattern:regex - Removes a regex pattern anywhere
+    ///
+    /// Example: "prefix:Ic_Fluent_;suffix:_24_\w*$;pattern:-(original|plain)"
+    /// </summary>
+    public string? PropertyNameRemovalPatterns { get; set; }
 
     /// <summary>
     /// Gets or sets the local path to a repository containing SVG icons.
@@ -64,6 +82,19 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
     /// Default: \.svg$
     /// </summary>
     public string SvgPattern { get; set; } = @"\.svg$";
+
+    /// <summary>
+    /// Gets or sets whether to skip scrubbing colors in SVG content.
+    /// Default: false
+    /// </summary>
+    public bool SkipColorScrub { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether to preserve the extracted repository files after generation.
+    /// Useful for debugging path issues. When set to true, files are not deleted from the temp folder.
+    /// Default: false
+    /// </summary>
+    public bool PreserveExtractedFiles { get; set; }
 
     /// <summary>
     /// Cancels the task execution.
@@ -241,7 +272,14 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
             // Clean up downloaded files
             try
             {
-                downloader?.CleanUp();
+                if (!PreserveExtractedFiles)
+                {
+                    downloader?.CleanUp();
+                }
+                else
+                {
+                    Log.LogMessage(MessageImportance.High, $"Extracted files preserved at: {downloader?.RootFolder}");
+                }
             }
             catch (Exception cleanupEx)
             {
@@ -276,11 +314,17 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
         // Ensure output directory exists
         Directory.CreateDirectory(generatorPath);
 
+        // Use PropertyNameRemovalPatterns if set, otherwise fall back to PropertyNameRemovalPattern for backwards compatibility
+        var patternsToUse = !string.IsNullOrWhiteSpace(PropertyNameRemovalPatterns)
+            ? PropertyNameRemovalPatterns
+            : PropertyNameRemovalPattern;
+
         // Generate the code
         BlaziconsClassGenerator.GenerateClassFile(
             outputFilePath,
             ClassName,
             svgFolder,
-            propertyNameRemovalPattern: PropertyNameRemovalPattern);
+            propertyNameRemovalPatterns: patternsToUse,
+            skipColorScrub: SkipColorScrub);
     }
 }

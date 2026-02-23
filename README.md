@@ -26,18 +26,26 @@ Configure your `.csproj` file with the required properties to generate icon clas
     <BlaziconsSvgPattern>^src\/svg\/.*.svg$</BlaziconsSvgPattern>
     <BlaziconsClassName>MyIcon</BlaziconsClassName>
     <BlaziconsSvgFolderPath>src/svg</BlaziconsSvgFolderPath>
-    <BlaziconsPropertyNameRemovalPattern>-(original|plain|line)</BlaziconsPropertyNameRemovalPattern>
+    <BlaziconsPropertyNameRemovalPatterns>^My_Icon_;_24_\w*$;-(original|plain|line)</BlaziconsPropertyNameRemovalPatterns>
+    <BlaziconsSkipColorScrub>true</BlaziconsSkipColorScrub>
     <BlaziconsGeneratedCodeOutputPath>Generated</BlaziconsGeneratedCodeOutputPath>
     <BlaziconsGeneratorPath>MyIcons.Generating/MyIcons.Generating.MyIconsGenerator</BlaziconsGeneratorPath>
   </PropertyGroup>
 </Project>
 ```
 
-**Property Name Removal Example:**  
-When `BlaziconsPropertyNameRemovalPattern` is set to `-(original|plain|line)`, file names are transformed as follows:
-- `react-plain.svg` → `React` (instead of `ReactPlain`)
-- `angular-original.svg` → `Angular` (instead of `AngularOriginal`)
-- `vue-line.svg` → `Vue` (instead of `VueLine`)
+**Property Name Transformation Examples:**
+
+Patterns are applied in order. Use regex anchors to control where matching occurs:
+- `^pattern` - Removes from the start (prefix removal)
+- `pattern$` - Removes from the end (suffix removal)
+- `pattern` - Removes anywhere in the filename
+
+Example with the above configuration:
+- `Ic_Fluent_Activity_24_regular.svg` → `Activity` (prefix `^Ic_Fluent_` removed, then suffix `_24_\w*$` removed)
+- `Ic_Fluent_Person_24_filled.svg` → `Person` (prefix `^Ic_Fluent_` removed, then suffix `_24_\w*$` removed)
+- `react-plain.svg` → `React` (pattern `-(original|plain|line)` removed)
+- `angular-original.svg` → `Angular` (pattern `-(original|plain|line)` removed)
 
 ### Configuration Properties
 
@@ -48,9 +56,11 @@ When `BlaziconsPropertyNameRemovalPattern` is set to `-(original|plain|line)`, f
 | `BlaziconsSvgPattern` | Yes | Regex pattern to filter SVG files | `^src\/svg\/.*.svg$` |
 | `BlaziconsClassName` | Yes | Name of the generated icon class | `MyIcon` |
 | `BlaziconsSvgFolderPath` | No | Relative path within the repo to the SVG folder | `src/svg` |
-| `BlaziconsPropertyNameRemovalPattern` | No | Regex pattern to remove from file names when generating property names | `-(original\|plain\|line)` |
+| `BlaziconsPropertyNameRemovalPatterns` | No | Semicolon-delimited regex patterns to remove from file names: `^pattern` (prefix), `pattern$` (suffix), `pattern` (anywhere) | `^My_Icons_;_24_\w*$;-(original\|plain\|line)` |
+| `BlaziconsSkipColorScrub` | No | Skip color scrubbing for SVG content | `true` |
 | `BlaziconsGeneratedCodeOutputPath` | Yes | Output directory for generated code | `Generated` |
 | `BlaziconsGeneratorPath` | No | Generator namespace/path structure for the generated file | `Blazicons.MyIcons.Generating/Blazicons.MyIcons.Generating.MyIconsGenerator` |
+| `BlaziconsPreserveExtractedFiles` | No | Preserve extracted repository files after generation for debugging path issues | `true` |
 
 \* Either `BlaziconsRepoUrl` or `BlaziconsRepoPath` must be specified.
 
@@ -77,6 +87,17 @@ Code generation is controlled by the `BlaziconsEnableCodeGeneration` property, w
 </PropertyGroup>
 ```
 
+### Debugging Path Issues
+When experiencing "SVG folder not found" errors, use the `BlaziconsPreserveExtractedFiles` property to preserve temporary files for inspection:
+
+```xml
+<PropertyGroup>
+  <BlaziconsPreserveExtractedFiles>true</BlaziconsPreserveExtractedFiles>
+</PropertyGroup>
+```
+
+Build the project and check the build output for the message "Extracted files preserved at: [path]". You can then navigate to that directory to verify the folder structure and determine the correct `BlaziconsSvgFolderPath` value. Remember to set this property back to `false` for production builds.
+
 ## Troubleshooting
 
 ### Code not generating
@@ -84,6 +105,13 @@ Code generation is controlled by the `BlaziconsEnableCodeGeneration` property, w
 2. Verify all required properties are configured
 3. Check that the `BlaziconsRepoUrl` or `BlaziconsRepoPath` is valid and accessible
 4. Review build output for error messages from the generator
+
+### SVG folder not found
+1. Use `BlaziconsPreserveExtractedFiles` set to `true` to keep temporary extracted files
+2. Check the build output for the "Extracted files preserved at" message
+3. Navigate to that directory to verify the actual folder structure
+4. Adjust `BlaziconsSvgFolderPath` to match the relative path from the extracted files root
+5. Remember to set `BlaziconsPreserveExtractedFiles` back to `false` for normal use
 
 ### Build errors after generation
 1. Clean the solution and rebuild
