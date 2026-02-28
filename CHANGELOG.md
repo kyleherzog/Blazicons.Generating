@@ -1,6 +1,9 @@
 # Changelog
 These are the list of changes to each version that has been released.
 
+## 3.3
+- [x] Added more logging
+
 ## 3.2
 - [x] Added BlaziconsPropertyNameRemovalPatterns to allow support for multiple patterns
 - [x] Added SkipColorScrub parameter

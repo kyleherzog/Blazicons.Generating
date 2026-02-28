@@ -310,6 +310,7 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
         var outputFilePath = Path.Combine(generatorPath, $"{ClassName}.g.cs");
 
         Log.LogMessage(MessageImportance.Normal, $"Generating class file: {outputFilePath}");
+        Log.LogMessage(MessageImportance.Normal, $"SkipColorScrub value: {SkipColorScrub}");
 
         // Ensure output directory exists
         Directory.CreateDirectory(generatorPath);
