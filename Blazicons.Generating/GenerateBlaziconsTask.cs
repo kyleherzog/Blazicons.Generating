@@ -338,7 +338,9 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
             outputFilePath,
             ClassName,
             svgFolder,
+            searchPattern: "*.svg",
             propertyNameRemovalPatterns: patternsToUse,
+            isFileNameOk: null,
             skipColorScrub: skipColorScrub);
     }
 }
