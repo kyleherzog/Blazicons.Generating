@@ -33,6 +33,7 @@
     </PropertyGroup>
 
     <Message Text="Running Blazicons generator for $(MSBuildProjectName)..." Importance="high" />
+    <Message Text="BlaziconsSkipColorScrub = '$(BlaziconsSkipColorScrub)'" Importance="high" />
 
     <!-- Validate that either RepoUrl or RepoPath is set -->
     <Error Condition="'$(BlaziconsRepoUrl)' == '' AND '$(BlaziconsRepoPath)' == ''"
