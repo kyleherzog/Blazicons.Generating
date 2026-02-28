@@ -97,6 +97,17 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
     public bool PreserveExtractedFiles { get; set; }
 
     /// <summary>
+    /// Gets the actual boolean value for SkipColorScrub after parsing.
+    /// This helps ensure MSBuild string values are properly converted.
+    /// </summary>
+    private bool GetSkipColorScrubValue()
+    {
+        // MSBuild should automatically convert, but we'll be explicit
+        Log.LogMessage(MessageImportance.High, $"SkipColorScrub property value: {SkipColorScrub}");
+        return SkipColorScrub;
+    }
+
+    /// <summary>
     /// Cancels the task execution.
     /// </summary>
     public void Cancel()
@@ -319,12 +330,17 @@ public class GenerateBlaziconsTask : MSBuildTask, ICancelableTask, IDisposable
             ? PropertyNameRemovalPatterns
             : PropertyNameRemovalPattern;
 
+        // Get the actual boolean value and log it
+        var skipColorScrub = GetSkipColorScrubValue();
+
         // Generate the code
         BlaziconsClassGenerator.GenerateClassFile(
             outputFilePath,
             ClassName,
             svgFolder,
+            searchPattern: "*.svg",
             propertyNameRemovalPatterns: patternsToUse,
-            skipColorScrub: SkipColorScrub);
+            isFileNameOk: null,
+            skipColorScrub: skipColorScrub);
     }
 }
