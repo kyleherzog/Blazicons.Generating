@@ -33,7 +33,7 @@ internal class SvgDocument
         var strokeColors = nodes.Where(x => x.Attributes.Contains("stroke")).Select(x => x.Attributes["stroke"].Value).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         strokeColors.Remove("none");
         var colorColors = nodes.Where(x => x.Attributes.Contains("color")).Select(x => x.Attributes["color"].Value).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-        var allColors = fillColors.Concat(strokeColors).Concat(colorColors).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        var allColors = fillColors.Concat(strokeColors).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         if (allColors.Count > 1)
         {
             return SvgColorType.Multiple;
