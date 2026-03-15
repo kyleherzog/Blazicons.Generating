@@ -1,6 +1,9 @@
 # Changelog
 These are the list of changes to each version that has been released.
 
+## 3.3
+- [x] Fixed issue with color replacement in nested SVG elements
+
 ## 3.2
 - [x] Added BlaziconsPropertyNameRemovalPatterns to allow support for multiple patterns
 - [x] Added SkipColorScrub parameter
